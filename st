@@ -1,15 +1,21 @@
 public enum SearchType
 {
+    All,
+    None,
+    
     GlobalType,
     SpecifiedType,
     Product,
+
     ErrorCode,
     ErrorCategory,
+    
     State,
     TitlePlant,
     County,
     Municipality,
 
+    ErrorCodeAndErrorCategory,
     GlobalTypeAndErrorCode,
     GlobalTypeAndErrorCategory,
     SpecifiedTypeAndErrorCode,
