@@ -1,0 +1,142 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text.Json;
+
+namespace program5;
+public class SearchCriteria
+{
+    public int OrderId { get; set; }
+    public string CustomerName { get; set; }
+    public DateTime OrderDate { get; set; }
+    public decimal TotalAmount { get; set; }
+    public bool IsShipped { get; set; }
+    public string ShippingAddress { get; set; }
+    public string BillingAddress { get; set; }
+    public string Email { get; set; }
+    public string PhoneNumber { get; set; }
+
+    public bool[] GetActiveFields()
+    {
+        return new bool[]
+        {
+            OrderId != 0,
+            !string.IsNullOrEmpty(CustomerName),
+            OrderDate != default(DateTime),
+            TotalAmount != default(decimal),
+            IsShipped,
+            !string.IsNullOrEmpty(ShippingAddress),
+            !string.IsNullOrEmpty(BillingAddress),
+            !string.IsNullOrEmpty(Email),
+            !string.IsNullOrEmpty(PhoneNumber),
+        };
+    }
+}
+
+public class Order
+{
+    public int OrderId { get; set; }
+    public string CustomerName { get; set; }
+    public DateTime OrderDate { get; set; }
+    public decimal TotalAmount { get; set; }
+    public bool IsShipped { get; set; }
+    public string ShippingAddress { get; set; }
+    public string BillingAddress { get; set; }
+    public string Email { get; set; }
+    public string PhoneNumber { get; set; }
+
+    public Order(int orderId, string customerName, DateTime orderDate, decimal totalAmount,
+                 bool isShipped, string shippingAddress, string billingAddress, string email, string phoneNumber)
+    {
+        OrderId = orderId;
+        CustomerName = customerName;
+        OrderDate = orderDate;
+        TotalAmount = totalAmount;
+        IsShipped = isShipped;
+        ShippingAddress = shippingAddress;
+        BillingAddress = billingAddress;
+        Email = email;
+        PhoneNumber = phoneNumber;
+    }
+}
+
+public static class PredicateBuilder
+{
+    public static Expression<Func<T, bool>> True<T>() { return f => true; }
+    public static Expression<Func<T, bool>> False<T>() { return f => false; }
+
+    public static Expression<Func<T, bool>> And<T>(this Expression<Func<T, bool>> expr1,
+                                                   Expression<Func<T, bool>> expr2)
+    {
+        var invokedExpr = Expression.Invoke(expr2, expr1.Parameters.Cast<Expression>());
+        return Expression.Lambda<Func<T, bool>>
+              (Expression.AndAlso(expr1.Body, invokedExpr), expr1.Parameters);
+    }
+}
+
+public static class OrderPredicates
+{
+    public static Expression<Func<Order, bool>> BuildPredicate(SearchCriteria criteria)
+    {
+        var predicate = PredicateBuilder.True<Order>();
+        var activeFields = criteria.GetActiveFields();
+
+        for (int i = 0; i < activeFields.Length; i++)
+        {
+            if (activeFields[i])
+            {
+                predicate = predicate.And(GetPredicateForField(i, criteria));
+            }
+        }
+
+        return predicate;
+    }
+
+    private static Expression<Func<Order, bool>> GetPredicateForField(int index, SearchCriteria criteria)
+    {
+        switch (index)
+        {
+            case 0: return order => order.OrderId == criteria.OrderId;
+            case 1: return order => order.CustomerName == criteria.CustomerName;
+            case 2: return order => order.OrderDate == criteria.OrderDate;
+            case 3: return order => order.TotalAmount == criteria.TotalAmount;
+            case 4: return order => order.IsShipped == criteria.IsShipped;
+            case 5: return order => order.ShippingAddress == criteria.ShippingAddress;
+            case 6: return order => order.BillingAddress == criteria.BillingAddress;
+            case 7: return order => order.Email == criteria.Email;
+            case 8: return order => order.PhoneNumber == criteria.PhoneNumber;
+            default: throw new ArgumentOutOfRangeException(nameof(index));
+        }
+    }
+}
+
+public class Program
+{
+    public static void Main()
+    {
+        List<Order> orders = new List<Order>
+        {
+            new Order(1, "John Doe", DateTime.Now, 100.50m, false, "123 Shipping St, CityA", "CityB", "john.doe@example.com",  "+1234567890"),
+            new Order(2, "Jane Smith", DateTime.Now.AddDays(-1), 200.75m, true, "456 Shipping Ave, CityB", "CityB", "jane.smith@example.com", "+1234567890"),
+            new Order(3, "Michael Johnson", DateTime.Now.AddDays(-3), 300.25m, true, "789 Shipping Rd, CityC", "CityB", "john.doe@example.com",  "+1234567890"),
+            new Order(4, "Emily Brown", DateTime.Now.AddDays(-5), 150.00m, false, "345 Shipping Blvd, CityD", "CityB", "emily.brown@example.com",  "+1234567890"),
+            new Order(5, "David Lee", DateTime.Now.AddDays(-7), 175.99m, false, "901 Shipping Ln, CityE", "CityB", "john.doe@example.com",  "+12345678900")
+        };
+
+        SearchCriteria searchCriteria = new SearchCriteria()
+        {
+            BillingAddress = "CityB",
+            PhoneNumber = "+1234567890"
+        };
+
+        var predicate = OrderPredicates.BuildPredicate(searchCriteria);
+        var filteredOrders = orders.AsQueryable().Where(predicate).ToList();
+
+        Console.WriteLine("Filtered Orders:");
+        foreach (var order in filteredOrders)
+        {
+            Console.WriteLine(JsonSerializer.Serialize(order));
+        }
+    }
+}
