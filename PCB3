@@ -1,0 +1,211 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.Metrics;
+using System.Text.Json;
+
+// Enum for OrderErrorSearchType
+public enum OrderErrorSearchType
+{
+    None,
+    All,
+
+    GlobalType,
+    SpecifiedType,
+    Product,
+
+    ErrorCategory,
+    ErrorCode,
+
+    State,
+    TitlePlant,
+    County,
+    Municipality,
+
+    GlobalType_ErrorCategory,
+    SpecifiedType_ErrorCategory,
+    Product_ErrorCategory,
+
+    GlobalType_ErrorCode,
+    SpecifiedType_ErrorCode,
+    Product_ErrorCode,
+
+    GlobalType_State,
+    GlobalType_TitlePlant,
+    GlobalType_County,
+    GlobalType_Municipality,
+
+    SpecifiedType_State,
+    SpecifiedType_TitlePlant,
+    SpecifiedType_County,
+    SpecifiedType_Municipality,
+
+
+    Product_State,
+    Product_TitlePlant,
+    Product_County,
+    Product_Municipality,
+
+
+    ErrorCategory_ErrorCode,
+
+    ErrorCategory_State,
+    ErrorCategory_TitlePlant,
+    ErrorCategory_County,
+    ErrorCategory_Municipality,
+
+
+    ErrorCode_State,
+    ErrorCode_TitlePlant,
+    ErrorCode_County,
+    ErrorCode_Municipality,
+
+    GlobalType_ErrorCategory_State,
+    GlobalType_ErrorCategory_TitlePlant,
+    GlobalType_ErrorCategory_County,
+    GlobalType_ErrorCategory_Municipality,
+
+    SpecifiedType_ErrorCategory_State,
+    SpecifiedType_ErrorCategory_TitlePlant,
+    SpecifiedType_ErrorCategory_County,
+    SpecifiedType_ErrorCategory_Municipality,
+
+    Product_ErrorCategory_State,
+    Product_ErrorCategory_TitlePlant,
+    Product_ErrorCategory_County,
+    Product_ErrorCategory_Municipality,
+
+    GlobalType_ErrorCode_State,
+    GlobalType_ErrorCode_TitlePlant,
+    GlobalType_ErrorCode_County,
+    GlobalType_ErrorCode_Municipality,
+
+    SpecifiedType_ErrorCode_State,
+    SpecifiedType_ErrorCode_TitlePlant,
+    SpecifiedType_ErrorCode_County,
+    SpecifiedType_ErrorCode_Municipality,
+
+    Product_ErrorCode_State,
+    Product_ErrorCode_TitlePlant,
+    Product_ErrorCode_Municipality,
+    Product_ErrorCode_County,
+
+    GlobalType_ErrorCategory_ErrorCode,
+    SpecifiedType_ErrorCategory_ErrorCode,
+    Product_ErrorCategory_ErrorCode,
+
+    ErrorCategory_ErrorCode_State,
+    ErrorCategory_ErrorCode_TitlePlant,
+    ErrorCategory_ErrorCode_County,
+    ErrorCategory_ErrorCode_Municipality,
+
+    GlobalType_ErrorCategory_ErrorCode_State,
+    GlobalType_ErrorCategory_ErrorCode_TitlePlant,
+    GlobalType_ErrorCategory_ErrorCode_County,
+    GlobalType_ErrorCategory_ErrorCode_Municipality,
+
+    SpecifiedType_ErrorCategory_ErrorCode_State,
+    SpecifiedType_ErrorCategory_ErrorCode_TitlePlant,
+    SpecifiedType_ErrorCategory_ErrorCode_County,
+    SpecifiedType_ErrorCategory_ErrorCode_Municipality,
+
+    Product_ErrorCategory_ErrorCode_State,
+    Product_ErrorCategory_ErrorCode_TitlePlant,
+    Product_ErrorCategory_ErrorCode_County
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Dictionary<string, bool[]> mappingsProduct = new Dictionary<string, bool[]>
+        {
+            { "Product", new bool[] { true, true, true} },
+            { "SpecifiedType", new bool[] { true, true, false } },
+            { "GlobalType", new bool[] { true, false, false } },
+
+        };
+
+        Dictionary<string, bool[]> mappingsError = new Dictionary<string, bool[]>
+        {
+            { "ErrorCategory_ErrorCode", new bool[] { true, true } },
+            { "ErrorCode", new bool[] { false, true } },
+            { "ErrorCategory", new bool[] { true, false } },
+        };
+
+        Dictionary<string, bool[]> mappingslocation = new Dictionary<string, bool[]>
+        {
+            { "Municipality", new bool[] { true, true, true, true } },
+            { "County", new bool[] { true, true, true, false } },
+            { "TitlePlant", new bool[] { true, true, false, false } },
+            { "State", new bool[] { true, false, false, false } },
+        };
+
+        List<(bool[], string)> result = new List<(bool[], string)>();
+
+        foreach (OrderErrorSearchType item in Enum.GetValues(typeof(OrderErrorSearchType)))
+        {
+            string itemName = item.ToString();
+            List<bool> temp = new List<bool>();
+
+            bool isProductKeyFound=false;
+            foreach (string key in mappingsProduct.Keys)
+            {
+                if (itemName.Contains(key))
+                {
+                    temp.AddRange(mappingsProduct[key]);
+                    isProductKeyFound = true;   
+                    break;
+                }
+            }
+            if (isProductKeyFound==false)
+            {
+                temp.AddRange(new bool[] {false,false,false });
+            }
+
+            bool isErrorKeyFound=false;
+            foreach (string key in mappingsError.Keys)
+            {
+                if (itemName.Contains(key))
+                {
+                    temp.AddRange(mappingsError[key]);
+                    isErrorKeyFound = true; 
+                    break;
+                }
+            }
+            if (isErrorKeyFound == false)
+            {
+                temp.AddRange(new bool[] { false, false });
+            }
+
+            bool isLocationKeyFound=false ;
+            foreach (string key in mappingslocation.Keys)
+            {
+                if (itemName.Contains(key))
+                {
+                    temp.AddRange(mappingslocation[key]);
+                    isLocationKeyFound = true;
+                    break;
+                }
+            }
+            if (isLocationKeyFound==false)
+            {
+                temp.AddRange(new bool[] {false,false,false,false});
+            }
+
+            // Add to result list
+            result.Add((temp.ToArray(), itemName));
+        }
+
+        // Print the result
+        foreach (var item in result)
+        {
+            Console.WriteLine($"Name: {item.Item2}");
+            Console.WriteLine("Array: "+JsonSerializer.Serialize(item.Item1) );
+           
+            Console.WriteLine();
+        }
+    }
+}
+
+
+
