@@ -1,0 +1,154 @@
+using System.Drawing;
+using System.Text.Json;
+
+public enum OrderErrorSearchType
+{
+    None,
+    All,
+    GlobalType,
+    SpecifiedType,
+    Product,
+    ErrorCategory,
+    ErrorCode,
+    State,
+    TitlePlant,
+    County,
+    Municipality,
+    GlobalTypeAndErrorCategory,
+    GlobalTypeAndErrorCode,
+    SpecifiedTypeAndErrorCategory,
+    SpecifiedTypeAndErrorCode,
+    ProductAndErrorCategory,
+    ProductAndErrorCode,
+    GlobalTypeAndState,
+    GlobalTypeAndTitlePlant,
+    GlobalTypeAndCounty,
+    GlobalTypeAndMunicipality,
+    SpecifiedTypeAndState,
+    SpecifiedTypeAndTitlePlant,
+    SpecifiedTypeAndCounty,
+    SpecifiedTypeAndMunicipality,
+    ProductAndState,
+    ProductAndTitlePlant,
+    ProductAndCounty,
+    ProductAndMunicipality,
+    ErrorCategoryAndErrorCode,
+    ErrorCodeAndState,
+    ErrorCodeAndTitlePlant,
+    ErrorCodeAndCounty,
+    ErrorCodeAndMunicipality,
+    ErrorCategoryAndState,
+    ErrorCategoryAndTitlePlant,
+    ErrorCategoryAndCounty,
+    ErrorCategoryAndMunicipality,
+    GlobalTypeAndErrorCategoryAndErrorCode,
+    SpecifiedTypeAndErrorCategoryAndErrorCode,
+    ProductAndErrorCategoryAndErrorCode,
+    GlobalTypeAndErrorCategoryAndErrorCodeAndState,
+    GlobalTypeAndErrorCategoryAndErrorCodeAndTitlePlant,
+    GlobalTypeAndErrorCategoryAndErrorCodeAndCounty,
+    GlobalTypeAndErrorCategoryAndErrorCodeAndMunicipality,
+    SpecifiedTypeAndErrorCategoryAndErrorCodeAndState,
+    SpecifiedTypeAndErrorCategoryAndErrorCodeAndTitlePlant,
+    SpecifiedTypeAndErrorCategoryAndErrorCodeAndCounty,
+    SpecifiedTypeAndErrorCategoryAndErrorCodeAndMunicipality,
+    ProductAndErrorCategoryAndErrorCodeAndState,
+    ProductAndErrorCategoryAndErrorCodeAndTitlePlant,
+    ProductAndErrorCategoryAndErrorCodeAndCounty,
+}
+
+public class BoolArrayComparer : IEqualityComparer<bool[]>
+{
+    public bool Equals(bool[] x, bool[] y)
+    {
+        if (x == null || y == null)
+            return x == y;
+        if (x.Length != y.Length)
+            return false;
+        for (int i = 0; i < x.Length; i++)
+        {
+            if (x[i] != y[i])
+                return false;
+        }
+        return true;
+    }
+
+    public int GetHashCode(bool[] obj)
+    {
+        if (obj == null)
+            return 0;
+        int result = 17;
+        for (int i = 0; i < obj.Length; i++)
+        {
+            result = result * 31 + obj[i].GetHashCode();
+        }
+        return result;
+    }
+}
+
+class Program
+{
+    static readonly Dictionary<bool[], OrderErrorSearchType> searchTypeDictionary = new Dictionary<bool[], OrderErrorSearchType>(new BoolArrayComparer())
+{
+    { new[] { false, false, false, false, false, false, false, false, false }, OrderErrorSearchType.None },
+    { new[] { true, false, false, false, false, false, false, false, false }, OrderErrorSearchType.GlobalType },
+    { new[] { true, true, false, false, false, false, false, false, false }, OrderErrorSearchType.SpecifiedType },
+    { new[] { true, true, true, false, false, false, false, false, false }, OrderErrorSearchType.Product },
+    { new[] { false, false, false, true, false, false, false, false, false }, OrderErrorSearchType.ErrorCategory },
+    { new[] { false, false, false, false, true, false, false, false, false }, OrderErrorSearchType.ErrorCode },
+    { new[] { false, false, false, false, false, true, false, false, false }, OrderErrorSearchType.State },
+    { new[] { false, false, false, false, false, true, true, false, false }, OrderErrorSearchType.TitlePlant },
+    { new[] { false, false, false, false, false, true, true, true, false }, OrderErrorSearchType.County },
+    { new[] { false, false, false, false, false, true, true, true, true }, OrderErrorSearchType.Municipality },
+    { new[] { true, false, false, true, false, false, false, false, false }, OrderErrorSearchType.GlobalTypeAndErrorCategory },
+    { new[] { true, false, false, false, true, false, false, false, false }, OrderErrorSearchType.GlobalTypeAndErrorCode },
+    { new[] { true, true, false, true, false, false, false, false, false }, OrderErrorSearchType.SpecifiedTypeAndErrorCategory },
+    { new[] { true, true, false, false, true, false, false, false, false }, OrderErrorSearchType.SpecifiedTypeAndErrorCode },
+    { new[] { true, true, true, true, false, false, false, false, false }, OrderErrorSearchType.ProductAndErrorCategory },
+    { new[] { true, true, true, false, true, false, false, false, false }, OrderErrorSearchType.ProductAndErrorCode },
+    { new[] { true, false, false, false, false, true, false, false, false }, OrderErrorSearchType.GlobalTypeAndState },
+    { new[] { true, false, false, false, false, true, true, false, false }, OrderErrorSearchType.GlobalTypeAndTitlePlant },
+    { new[] { true, false, false, false, false, true, true, true, false }, OrderErrorSearchType.GlobalTypeAndCounty },
+    { new[] { true, false, false, false, false, true, true, true, true }, OrderErrorSearchType.GlobalTypeAndMunicipality },
+    { new[] { true, true, false, false, false, true, false, false, false }, OrderErrorSearchType.SpecifiedTypeAndState },
+    { new[] { true, true, false, false, false, true, true, false, false }, OrderErrorSearchType.SpecifiedTypeAndTitlePlant },
+    { new[] { true, true, false, false, false, true, true, true, false }, OrderErrorSearchType.SpecifiedTypeAndCounty },
+    { new[] { true, true, false, false, false, true, true, true, true }, OrderErrorSearchType.SpecifiedTypeAndMunicipality },
+    { new[] { true, true, true, false, false, true, false, false, false }, OrderErrorSearchType.ProductAndState },
+    { new[] { true, true, true, false, false, true, true, false, false }, OrderErrorSearchType.ProductAndTitlePlant },
+    { new[] { true, true, true, false, false, true, true, true, false }, OrderErrorSearchType.ProductAndCounty },
+    { new[] { true, true, true, false, false, true, true, true, true }, OrderErrorSearchType.ProductAndMunicipality },
+    { new[] { false, false, false, true, true, false, false, false, false }, OrderErrorSearchType.ErrorCategoryAndErrorCode },
+    { new[] { false, false, false, false, true, true, false, false, false }, OrderErrorSearchType.ErrorCodeAndState },
+    { new[] { false, false, false, false, true, true, true, false, false }, OrderErrorSearchType.ErrorCodeAndTitlePlant },
+    { new[] { false, false, false, false, true, true, true, true, false }, OrderErrorSearchType.ErrorCodeAndCounty },
+    { new[] { false, false, false, false, true, true, true, true, true }, OrderErrorSearchType.ErrorCodeAndMunicipality },
+    { new[] { false, false, false, true, false, true, false, false, false }, OrderErrorSearchType.ErrorCategoryAndState },
+    { new[] { false, false, false, true, false, true, true, false, false }, OrderErrorSearchType.ErrorCategoryAndTitlePlant },
+    { new[] { false, false, false, true, false, true, true, true, false }, OrderErrorSearchType.ErrorCategoryAndCounty },
+    { new[] { false, false, false, true, false, true, true, true, true }, OrderErrorSearchType.ErrorCategoryAndMunicipality },
+    { new[] { true, false, false, true, true, false, false, false, false }, OrderErrorSearchType.GlobalTypeAndErrorCategoryAndErrorCode },
+    { new[] { true, true, false, true, true, false, false, false, false }, OrderErrorSearchType.SpecifiedTypeAndErrorCategoryAndErrorCode },
+    { new[] { true, true, true, true, true, false, false, false, false }, OrderErrorSearchType.ProductAndErrorCategoryAndErrorCode },
+    { new[] { true, false, false, true, true, true, false, false, false }, OrderErrorSearchType.GlobalTypeAndErrorCategoryAndErrorCodeAndState },
+    { new[] { true, false, false, true, true, true, true, false, false }, OrderErrorSearchType.GlobalTypeAndErrorCategoryAndErrorCodeAndTitlePlant },
+    { new[] { true, false, false, true, true, true, true, true, false }, OrderErrorSearchType.GlobalTypeAndErrorCategoryAndErrorCodeAndCounty },
+    { new[] { true, false, false, true, true, true, true, true, true }, OrderErrorSearchType.GlobalTypeAndErrorCategoryAndErrorCodeAndMunicipality },
+    { new[] { true, true, false, true, true, true, false, false, false }, OrderErrorSearchType.SpecifiedTypeAndErrorCategoryAndErrorCodeAndState },
+    { new[] { true, true, false, true, true, true, true, false, false }, OrderErrorSearchType.SpecifiedTypeAndErrorCategoryAndErrorCodeAndTitlePlant },
+    { new[] { true, true, false, true, true, true, true, true, false }, OrderErrorSearchType.SpecifiedTypeAndErrorCategoryAndErrorCodeAndCounty },
+    { new[] { true, true, false, true, true, true, true, true, true }, OrderErrorSearchType.SpecifiedTypeAndErrorCategoryAndErrorCodeAndMunicipality },
+    { new[] { true, true, true, true, true, true, false, false, false }, OrderErrorSearchType.ProductAndErrorCategoryAndErrorCodeAndState },
+    { new[] { true, true, true, true, true, true, true, false, false }, OrderErrorSearchType.ProductAndErrorCategoryAndErrorCodeAndTitlePlant },
+    { new[] { true, true, true, true, true, true, true, true, false }, OrderErrorSearchType.ProductAndErrorCategoryAndErrorCodeAndCounty },
+    { new[] { true, true, true, true, true, true, true, true, true }, OrderErrorSearchType.All },
+};
+
+
+    static void Main(string[] args)
+    {
+
+       var value = searchTypeDictionary.TryGetValue(new[] { true, true, true, true, true, true, true, true, true },out OrderErrorSearchType type);
+        Console.WriteLine(type + JsonSerializer.Serialize(value));
+    }
+}
