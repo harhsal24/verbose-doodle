@@ -1,0 +1,32 @@
+function getPropertyValue<T>(obj: T, orderBy: string): any {
+    const splitTheArr = orderBy.split('.');
+
+    if (splitTheArr.length === 0 || obj === undefined || obj === null) {
+        return undefined;
+    }
+
+    const result = splitTheArr.reduce((_obj: any, k: string) => {
+        console.log('Current key:', k);
+        if (_obj !== undefined && _obj !== null) {
+            console.log('Current value:', _obj[k]);
+        } else {
+            console.log('Current value is undefined or null');
+        }
+        return _obj ? _obj[k] : undefined;
+    }, obj);
+
+    return result;
+}
+
+// Example usage
+const bigJson = {
+    transaction: [
+        {
+            value: 42,
+            otherField: 'example'
+        }
+    ],
+    anotherField: 'test'
+};
+
+console.log(getPropertyValue(bigJson, 'transaction[0].value')); // Should output 42
