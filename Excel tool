@@ -1,0 +1,153 @@
+using System;
+using System.IO;
+using System.Net.Http;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Text.Json;
+using ClosedXML.Excel;
+
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        string filePath = "path/to/your/excel/file.xlsx";
+        string apiUrl = "https://api.example.com/endpoint";
+
+        Console.Write("Enter your bearer token: ");
+        string bearerToken = Console.ReadLine();
+
+        string host = "";
+
+        Console.WriteLine("Starting to read Excel file...");
+        List<ErrorData> data = ReadExcelFile(filePath);
+        Console.WriteLine($"Read {data.Count} rows from Excel file.");
+
+        List<ErrorData> failedRequests = new List<ErrorData>();
+
+        using (var client = new HttpClient())
+        {
+            // Set up headers once for all requests
+            client.DefaultRequestHeaders.Clear();
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {bearerToken}");
+            client.DefaultRequestHeaders.Add("Host", host);
+            client.DefaultRequestHeaders.Add("Accept", "*/*");
+            client.DefaultRequestHeaders.Add("Cache-Control", "no-cache");
+            client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip,deflate,br");
+            client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+
+            for (int i = 0; i < data.Count; i++)
+            {
+                var errorData = data[i];
+                Console.WriteLine($"Processing row {i + 1}: ErrorCode={errorData.ErrorCode}");
+
+                string json = JsonSerializer.Serialize(errorData);
+                Console.WriteLine($"Serialized JSON: {json}");
+
+                bool success = await SendPostRequest(client, apiUrl, json, errorData);
+                if (!success)
+                {
+                    failedRequests.Add(errorData);
+                }
+            }
+        }
+
+        Console.WriteLine("All requests processed.");
+        if (failedRequests.Count > 0)
+        {
+            Console.WriteLine("Failed requests:");
+            foreach (var failedRequest in failedRequests)
+            {
+                Console.WriteLine($"ErrorCode: {failedRequest.ErrorCode}, Description: {failedRequest.Description}, ErrorCategory: {failedRequest.ErrorCategory}");
+            }
+        }
+    }
+
+    class ErrorData
+    {
+        public string? ErrorCode { get; set; }
+        public string? Description { get; set; }
+        public string? ErrorCategory { get; set; }
+    }
+
+    static List<ErrorData> ReadExcelFile(string filePath)
+    {
+        var result = new List<ErrorData>();
+        using (var workbook = new XLWorkbook(filePath))
+        {
+            var worksheet = workbook.Worksheet(1);
+            var rows = worksheet.RowsUsed().Skip(1); // Skip header row
+            foreach (var row in rows)
+            {
+                var errorData = new ErrorData
+                {
+                    ErrorCode = row.Cell(1).Value.ToString(),
+                    Description = row.Cell(2).Value.ToString(),
+                    ErrorCategory = row.Cell(3).Value.ToString()
+                };
+                result.Add(errorData);
+            }
+        }
+        return result;
+    }
+
+    static async Task<bool> SendPostRequest(HttpClient client, string url, string json, ErrorData errorData)
+    {
+        var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+        //// Add custom headers
+        //client.DefaultRequestHeaders.Clear();
+        //client.DefaultRequestHeaders.Add("Authorization", $"Bearer {bearerToken}");
+        //client.DefaultRequestHeaders.Add("Custom-Header", "Custom-Value");
+        //// Add any other headers you need
+
+        var response = await client.PostAsync(url, content);
+
+        if (response.IsSuccessStatusCode)
+        {
+            if (response.StatusCode == System.Net.HttpStatusCode.Created)
+            {
+                Console.WriteLine($"POST request successful (201 Created): ErrorCode={errorData.ErrorCode}");
+                WriteToExcel(errorData, "Created");
+            }
+            else
+            {
+                Console.WriteLine($"POST request successful: ErrorCode={errorData.ErrorCode}, StatusCode={response.StatusCode}");
+            }
+            return true;
+        }
+        else
+        {
+            Console.WriteLine($"POST request failed: ErrorCode={errorData.ErrorCode}, StatusCode={response.StatusCode}");
+            return false;
+        }
+    }
+
+    static void WriteToExcel(ErrorData errorData, string status)
+    {
+        string outputPath = "output.xlsx";
+        try
+        {
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.Worksheets.Add("Results");
+                worksheet.Cell("A1").Value = "ErrorCode";
+                worksheet.Cell("B1").Value = "Description";
+                worksheet.Cell("C1").Value = "ErrorCategory";
+                worksheet.Cell("D1").Value = "Status";
+
+                int row = worksheet.LastRowUsed().RowNumber() + 1;
+                worksheet.Cell(row, 1).Value = errorData.ErrorCode;
+                worksheet.Cell(row, 2).Value = errorData.Description;
+                worksheet.Cell(row, 3).Value = errorData.ErrorCategory;
+                worksheet.Cell(row, 4).Value = status;
+
+                workbook.SaveAs(outputPath);
+            }
+            Console.WriteLine($"Row written to Excel: ErrorCode={errorData.ErrorCode}, Status={status}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error writing to Excel: {ex.Message}");
+        }
+    }
+}
