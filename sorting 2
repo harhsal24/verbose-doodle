@@ -1,0 +1,128 @@
+function genericComparator<T>(a: T, b: T, field: string): number {
+    const valueA = getPropertyValue(a, field);
+    const valueB = getPropertyValue(b, field);
+
+    if (valueA < valueB) return -1;
+    if (valueA > valueB) return 1;
+
+    // If the values are equal, return 0
+    return 0;
+}
+
+function getPropertyValue<T>(obj: T, field: string): any {
+    // Handle array index notation
+    const parts = field.split('.');
+    let current: any = obj;
+
+    for (const part of parts) {
+        const arrayMatch = part.match(/^(\w+)\[(\d+)\]$/);
+        if (arrayMatch) {
+            const [, arrayName, index] = arrayMatch;
+            current = current[arrayName]?.[parseInt(index, 10)];
+        } else {
+            current = current[part];
+        }
+        
+        if (current === undefined || current === null) {
+            return undefined;
+        }
+    }
+
+    return current;
+}
+
+
+
+interface Transaction {
+    date: string; // ISO date string
+    amount: number;
+    status: string; // e.g., "completed", "pending"
+}
+
+interface Product {
+    id: number;
+    name: string;
+    category: string;
+    price: number;
+    tags: string[];
+    transactions: Transaction[]; // Array of transactions
+}
+
+const products: Product[] = [
+    {
+        id: 1,
+        name: "Laptop",
+        category: "Electronics",
+        price: 999.99,
+        tags: ["computer", "technology"],
+        transactions: [
+            { date: "2024-08-01", amount: 999.99, status: "completed" },
+            { date: "2024-08-15", amount: 999.99, status: "pending" }
+        ]
+    },
+    {
+        id: 2,
+        name: "Smartphone",
+        category: "Electronics",
+        price: 699.99,
+        tags: ["phone", "technology", "mobile"],
+        transactions: [
+            { date: "2024-07-20", amount: 699.99, status: "completed" }
+        ]
+    },
+    {
+        id: 3,
+        name: "Coffee Maker",
+        category: "Home Appliances",
+        price: 79.99,
+        tags: ["kitchen", "appliance"],
+        transactions: [
+            { date: "2024-08-05", amount: 79.99, status: "completed" }
+        ]
+    },
+    {
+        id: 4,
+        name: "Desk Chair",
+        category: "Furniture",
+        price: 149.99,
+        tags: ["furniture", "office"],
+        transactions: [
+            { date: "2024-08-10", amount: 149.99, status: "completed" },
+            { date: "2024-08-18", amount: 149.99, status: "pending" }
+        ]
+    },
+    {
+        id: 5,
+        name: "Notebook",
+        category: "Stationery",
+        price: 5.99,
+        tags: ["stationery", "writing"],
+        transactions: [
+            { date: "2024-07-30", amount: 5.99, status: "completed" }
+        ]
+    }
+];
+
+function printProducts(products: Product[]) {
+    console.log(JSON.stringify(products, null, 2));
+}
+
+// Sort by price
+products.sort((a, b) => genericComparator(a, b, 'price'));
+console.log("Sorted by price:");
+printProducts(products);
+
+// Sort by name
+products.sort((a, b) => genericComparator(a, b, 'name'));
+console.log("Sorted by name:");
+printProducts(products);
+
+// Sort by transactions[0].amount
+products.sort((a, b) => genericComparator(a, b, 'transactions[0].amount'));
+console.log("Sorted by transactions[0].amount:");
+printProducts(products);
+
+// Sort by transactions[0].date
+products.sort((a, b) => genericComparator(a, b, 'transactions[0].date'));
+console.log("Sorted by transactions[0].date:");
+printProducts(products);
