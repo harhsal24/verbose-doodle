@@ -1,0 +1,143 @@
+function genericComparator<T>(a: T, b: T, field: string): number {
+    const valueA = getPropertyValue(a, field);
+    const valueB = getPropertyValue(b, field);
+
+    if (valueA < valueB) return -1;
+    if (valueA > valueB) return 1;
+
+    // If the values are equal, return 0
+    return 0;
+}
+
+function getPropertyValue(obj: any, field: string): any {
+    // Handle array index notation
+    const parts = field.split('.');
+    let current = obj;
+
+    for (const part of parts) {
+        const arrayMatch = part.match(/^(\w+)\[(\d+)\]$/);
+        if (arrayMatch) {
+            const [, arrayName, index] = arrayMatch;
+            current = current[arrayName]?.[parseInt(index, 10)];
+        } else {
+            current = current[part];
+        }
+        
+        if (current === undefined || current === null) {
+            return undefined;
+        }
+    }
+
+    return current;
+}
+
+
+interface Transaction {
+    value: number;
+    otherField: string;
+}
+
+interface Person {
+    name: string;
+    age: number;
+    address: {
+        city: string;
+        zipcode: string;
+    };
+    transaction: Transaction[];
+}
+
+const people: Person[] = [
+    {
+        name: "Alice",
+        age: 30,
+        address: {
+            city: "New York",
+            zipcode: "10001"
+        },
+        transaction: [
+            {
+                value: 42,
+                otherField: "example"
+            }
+        ]
+    },
+    {
+        name: "Bob",
+        age: 25,
+        address: {
+            city: "Los Angeles",
+            zipcode: "90001"
+        },
+        transaction: [
+            {
+                value: 58,
+                otherField: "sample"
+            }
+        ]
+    },
+    {
+        name: "Charlie",
+        age: 35,
+        address: {
+            city: "Chicago",
+            zipcode: "60601"
+        },
+        transaction: [
+            {
+                value: 75,
+                otherField: "demo"
+            }
+        ]
+    },
+    {
+        name: "Diana",
+        age: 28,
+        address: {
+            city: "San Francisco",
+            zipcode: "94101"
+        },
+        transaction: [
+            {
+                value: 20,
+                otherField: "sample"
+            }
+        ]
+    },
+    {
+        name: "Edward",
+        age: 40,
+        address: {
+            city: "Seattle",
+            zipcode: "98101"
+        },
+        transaction: [
+            {
+                value: 65,
+                otherField: "test"
+            }
+        ]
+    }
+];
+
+function printPeople(people: Person[]) {
+    console.log(JSON.stringify(people, null, 2));
+}
+
+
+// Sort by address.city
+// people.sort((a, b) => genericComparator(a, b, 'address.city'));
+// console.log(people);
+
+
+// // Sort by name
+// people.sort((a, b) => genericComparator(a, b, 'name'));
+// console.log(people);
+
+
+// Sort by transaction[0].value
+people.sort((a, b) => genericComparator(a, b, 'transaction[0].value'));
+// console.log(people);    
+
+// Print sorted people
+printPeople(people);
