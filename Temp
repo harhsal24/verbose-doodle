@@ -1,0 +1,35 @@
+{
+  "updateType": "AddErrors",
+  "error": {
+    "errorDetails": [
+      {
+        "errorStatus": "New",
+        "errorCode": "1.00",
+        "errorDescription": "Cherry picking",
+        "errorCategory": "Searching",
+        "notes": "This is an error describing errorCode 1.00",
+        "createdDate": "2024-07-01T07:41:00.000-04:00",
+        "errorCommittedDate": "2024-08-01T07:41:00.000-04:00",
+        "createdBy": "TestUser",
+        "lastUpdatedDate": "2024-08-01T07:41:00.000-04:00",
+        "points": "9",
+        "reportedBy": "TestUser",
+        "vendorOrderId": "TV-12345-12345"
+      },
+      {
+        "errorStatus": "Resolved",
+        "errorCode": "2.00",
+        "errorDescription": "Mislabeling",
+        "errorCategory": "Processing",
+        "notes": "This is an error describing errorCode 2.00",
+        "createdDate": "2024-06-15T10:00:00.000-04:00",
+        "errorCommittedDate": "2024-06-20T10:00:00.000-04:00",
+        "createdBy": "AnotherUser",
+        "lastUpdatedDate": "2024-07-01T11:30:00.000-04:00",
+        "points": "5",
+        "reportedBy": "AnotherUser",
+        "vendorOrderId": "TV-54321-54321"
+      }
+    ]
+  }
+}
