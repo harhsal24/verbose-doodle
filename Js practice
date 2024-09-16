@@ -1,0 +1,52 @@
+function fillFieldsWithRetry(fields, delay) {
+    let i = 0;
+
+    function fillNext() {
+        if (i < fields.length) {
+            const field = fields[i];
+            const ele = document.getElementById(field.id);
+
+            if (ele) {
+                if (ele.tagName === "SELECT") {
+                    let retries = 0;
+
+                    function trySelectOption() {
+                        ele.click(); // Simulate a click on the select element
+                        const options = ele.options;
+                        let optionFound = false;
+
+                        for (let index = 0; index < options.length; index++) {
+                            if (options[index].value === field.value) {
+                                ele.value = options[index].value; // Set the value directly
+                                ele.dispatchEvent(new Event('change', { bubbles: true })); // Dispatch the change event
+                                optionFound = true;
+                                break;
+                            }
+                        }
+
+                        if (!optionFound && retries < 5) {
+                            retries++;
+                            setTimeout(trySelectOption, delay); // Retry after the delay
+                        } else {
+                            i++;
+                            setTimeout(fillNext, delay); // Move to the next field
+                        }
+                    }
+
+                    trySelectOption();
+                } else {
+                    ele.value = field.value;
+                    i++;
+                    setTimeout(fillNext, delay);
+                }
+            } else {
+                i++;
+                setTimeout(fillNext, delay);
+            }
+        }
+    }
+
+    fillNext();
+}
+
+fillFieldsWithRetry(fields, 2000);
