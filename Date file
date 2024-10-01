@@ -1,0 +1,32 @@
+using FluentValidation;
+using FluentValidation.Validators;
+using System;
+using System.Globalization;
+
+namespace Domain.Validation
+{
+    public class ApplicationDateOnlyValidator<T> : PropertyValidator<T, string?>
+    {
+        // Define multiple date formats to accept both "-" and "/" as separators
+        private static readonly string[] DateFormats = { "yyyy-MM-dd", "yyyy/MM/dd" };
+        
+        public override string Name => "ApplicationDateOnly";
+
+        // The validation logic for the date field
+        public override bool IsValid(ValidationContext<T> context, string? value)
+        {
+            // If the value is null or empty, it's considered valid (optional field)
+            if (string.IsNullOrEmpty(value))
+                return true;
+
+            // Validate the date format (yyyy-MM-dd or yyyy/MM/dd)
+            return DateOnly.TryParseExact(value, DateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out _);
+        }
+
+        // Default error message template if validation fails
+        protected override string GetDefaultMessageTemplate(string errorCode)
+        {
+            return $"{{PropertyName}} must be a valid date string in the format 'yyyy-MM-dd' or 'yyyy/MM/dd'.";
+        }
+    }
+}
