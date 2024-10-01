@@ -1,3 +1,34 @@
+public async Task<IEnumerable<Model.Action>> GetActionsAsync(GetActionContext? context = null)
+{
+    // Build the query
+    var query = queryBuilder.Actions();
+    var search = dynamoContext.QueryAsync<ActionItem>(query.Pk, query.Config);
+    
+    // Retrieve all action items from DynamoDB
+    var actionItems = await search.GetRemainingAsync();
+
+    // If the context is null or none of the context fields are provided, return all actions
+    if (context == null || (context.DateType == null && context.StartDate == null && context.EndDate == null && 
+                            context.ActionType == null && context.ActionStatus == null && context.User == null))
+    {
+        return actionItems.Select(action => mapper.Map<Model.Action>(action));
+    }
+
+    // Apply filters based on the provided context
+    var filteredActions = actionItems
+        .Where(act =>
+            (context.ActionType == null || context.ActionType == act.Title) &&
+            (context.ActionStatus == null || context.ActionStatus == act.Status) &&
+            (context.User == null || context.User == act.Assignee) &&
+            GetByDateType(context)(act) // Filter based on date type, start, and end dates
+        )
+        .ToList();
+
+    // Map the filtered results to the desired model
+    return filteredActions.Select(action => mapper.Map<Model.Action>(action));
+}
+
+
 private Func<ActionItem, bool> GetByDateType(GetActionContext context)
 {
     // If DateType is null or empty, return a predicate that always returns true
