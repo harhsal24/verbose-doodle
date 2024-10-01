@@ -1,0 +1,42 @@
+private Func<ActionItem, bool> GetByDateType(GetActionContext context)
+{
+    // If DateType is null or empty, return a predicate that always returns true
+    if (string.IsNullOrEmpty(context?.DateType))
+        return _ => true;
+
+    // Parse the start and end dates
+    DateOnly? startDateOnly = string.IsNullOrEmpty(context?.StartDate)
+        ? null
+        : ApplicationTime.ParseDateOnly(context.StartDate!);
+
+    DateOnly? endDateOnly = string.IsNullOrEmpty(context?.EndDate)
+        ? null
+        : ApplicationTime.ParseDateOnly(context.EndDate!);
+
+    // Get the current time with the correct offset
+    DateTimeOffset now = ApplicationTime.NowEst();
+
+    // Convert startDateOnly and endDateOnly to DateTimeOffset
+    DateTimeOffset? startDate = startDateOnly == null
+        ? (DateTimeOffset?)null
+        : new DateTimeOffset(startDateOnly.Value.Year, startDateOnly.Value.Month, startDateOnly.Value.Day, 0, 0, 0, now.Offset);
+
+    DateTimeOffset? endDate = endDateOnly == null
+        ? (DateTimeOffset?)null
+        : new DateTimeOffset(endDateOnly.Value.Year, endDateOnly.Value.Month, endDateOnly.Value.Day, 23, 59, 59, now.Offset);
+
+    // Return the appropriate predicate based on the DateType
+    return context?.DateType switch
+    {
+        "CreatedAt" => (ActionItem act) =>
+            (startDate == null || startDate <= DateTimeOffset.Parse(act.CreatedAt!)) &&
+            (endDate == null || DateTimeOffset.Parse(act.CreatedAt!) <= endDate),
+
+        "UpdatedAt" => (ActionItem act) =>
+            !string.IsNullOrEmpty(act.StatusUpdatedAt) &&
+            (startDate == null || startDate <= DateTimeOffset.Parse(act.StatusUpdatedAt!)) &&
+            (endDate == null || DateTimeOffset.Parse(act.StatusUpdatedAt!) <= endDate),
+
+        _ => throw new ArgumentException("Invalid comparison type")
+    };
+}
