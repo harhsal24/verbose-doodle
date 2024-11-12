@@ -1,0 +1,53 @@
+using System;
+
+public static class DateHelper
+{
+    public static (DateTimeOffset? Start, DateTimeOffset? End) ConvertDateOnlyToDateTimeOffset(DateOnly? startDate, DateOnly? endDate)
+    {
+        DateTimeOffset? startDateTimeOffset = startDate.HasValue 
+            ? new DateTimeOffset(startDate.Value.ToDateTime(new TimeOnly(0, 0, 0)), TimeSpan.Zero) 
+            : (DateTimeOffset?)null;
+        
+        DateTimeOffset? endDateTimeOffset = endDate.HasValue 
+            ? new DateTimeOffset(endDate.Value.ToDateTime(new TimeOnly(23, 59, 59)), TimeSpan.Zero) 
+            : (DateTimeOffset?)null;
+
+        return (startDateTimeOffset, endDateTimeOffset);
+    }
+
+    public static (DateTimeOffset? StartUtc, DateTimeOffset? EndUtc) ConvertDateOnlyToUtcDateTimeOffset(DateOnly? startDate, DateOnly? endDate)
+    {
+        var (start, end) = ConvertDateOnlyToDateTimeOffset(startDate, endDate);
+
+        DateTimeOffset? startUtc = start?.ToUniversalTime();
+        DateTimeOffset? endUtc = end?.ToUniversalTime();
+
+        return (startUtc, endUtc);
+    }
+
+    public static (DateTimeOffset? Start, DateTimeOffset? End) ConvertDateOnlyToDateTimeOffset(string? startDate, string? endDate)
+    {
+        if (string.IsNullOrWhiteSpace(startDate) && string.IsNullOrWhiteSpace(endDate))
+        {
+            return (null, null);
+        }
+
+        DateOnly? parsedStartDate = DateOnly.TryParse(startDate, out var tempStartDate) ? tempStartDate : (DateOnly?)null;
+        DateOnly? parsedEndDate = DateOnly.TryParse(endDate, out var tempEndDate) ? tempEndDate : (DateOnly?)null;
+
+        return ConvertDateOnlyToDateTimeOffset(parsedStartDate, parsedEndDate);
+    }
+
+    public static (DateTimeOffset? StartUtc, DateTimeOffset? EndUtc) ConvertDateOnlyToUtcDateTimeOffset(string? startDate, string? endDate)
+    {
+        if (string.IsNullOrWhiteSpace(startDate) && string.IsNullOrWhiteSpace(endDate))
+        {
+            return (null, null);
+        }
+
+        DateOnly? parsedStartDate = DateOnly.TryParse(startDate, out var tempStartDate) ? tempStartDate : (DateOnly?)null;
+        DateOnly? parsedEndDate = DateOnly.TryParse(endDate, out var tempEndDate) ? tempEndDate : (DateOnly?)null;
+
+        return ConvertDateOnlyToUtcDateTimeOffset(parsedStartDate, parsedEndDate);
+    }
+}
