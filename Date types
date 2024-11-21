@@ -1,0 +1,37 @@
+var dateStrings = new List<string>
+{
+    "2024-11-21T10:15:30+02:00",        // ISO 8601 with offset
+    "2024-11-21T10:15:30Z",             // ISO 8601 UTC
+    "2024-11-21T10:15:30.123+02:00",    // ISO 8601 with milliseconds
+    "2024-11-21",                       // ISO 8601 date only
+    "Thu, 21 Nov 2024 10:15:30 GMT",     // RFC 1123
+    "11/21/2024 10:15:30 AM",           // US format with time
+    "November 21, 2024 10:15:30 AM",    // Full US format
+    "21/11/2024 10:15:30",              // European format
+    "InvalidString",                    // Invalid input
+    "2024-11-21 10:15:30 PST",          // Time zone abbreviation
+    "11/21/2024",                       // Short date format (MM/dd/yyyy)
+    "2024/11/21",                       // Short date format (yyyy/MM/dd)
+    "2024-11-21 10:15:30",              // Custom date and time format (yyyy-MM-dd HH:mm:ss)
+    "2024-11-21 10:15:30.123",          // Custom date and time with milliseconds
+    "Thursday, November 21, 2024",      // Long date format (dddd, MMMM dd, yyyy)
+    "November 21, 2024",                // Long date format (MMMM dd, yyyy)
+    "2024-11-21T10:15:30.123Z",         // ISO 8601 with milliseconds and UTC
+    "2024-11-21T10:15:30+02:00",        // ISO 8601 with offset
+    "2024-11-21T10:15:30 -05:00",       // Local time with offset
+    "10:15 AM -05:00",                  // AM/PM with offset
+    "2024-11-21 10:15:30 -05:00"        // Full datetime with time zone offset
+};
+
+foreach (var dateString in dateStrings)
+        {
+            // Attempt to parse each string
+            if (DateTimeOffset.TryParse(dateString, out DateTimeOffset parsedDate))
+            {
+                Console.WriteLine($"Success: Parsed '{dateString}' as {parsedDate}");
+            }
+            else
+            {
+                Console.WriteLine($"Failure: Unable to parse '{dateString}'");
+            }
+        }
