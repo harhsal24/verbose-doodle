@@ -1,0 +1,30 @@
+public static (string startDate, string endDate) ConvertToDateOnly(string fromDate, string endDate)
+{
+    string ConvertStringToDateOnly(string input)
+    {
+        // Attempt to parse the string directly as DateOnly
+        if (DateOnly.TryParse(input, out DateOnly parsedDate))
+        {
+            return parsedDate.ToString("yyyy-MM-dd");
+        }
+
+        // If the string cannot be parsed, take the first 10 characters
+        string truncatedString = input.Length >= 10 ? input.Substring(0, 10) : input;
+
+        // Attempt to parse the truncated string as DateTime or DateTimeOffset
+        if (DateTime.TryParse(truncatedString, out DateTime parsedDateTime))
+        {
+            return DateOnly.FromDateTime(parsedDateTime).ToString("yyyy-MM-dd");
+        }
+        else if (DateTimeOffset.TryParse(truncatedString, out DateTimeOffset parsedDateTimeOffset))
+        {
+            return DateOnly.FromDateTime(parsedDateTimeOffset.DateTime).ToString("yyyy-MM-dd");
+        }
+
+        // If parsing fails completely, throw an exception or return a default value
+        throw new ArgumentException($"Invalid date string: {input}");
+    }
+
+    // Convert both dates
+    return (ConvertStringToDateOnly(fromDate), ConvertStringToDateOnly(endDate));
+}
