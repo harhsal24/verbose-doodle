@@ -1,0 +1,8 @@
+<configuration>
+  <appSettings>
+    <add key="RedisServer" value="localhost" />
+    <add key="RedisPort" value="6379" />
+    <add key="RedisPassword" value="mystrongpassword" />
+    <add key="RedisApp" value="myRedisApp" />
+  </appSettings>
+</configuration>
