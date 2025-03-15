@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+
+  <!-- 1) Declare the log4net section -->
+  <configSections>
+    <section name="log4net" 
+             type="log4net.Config.Log4NetConfigurationSectionHandler, log4net" />
+  </configSections>
+
+  <!-- 2) log4net configuration -->
+  <log4net>
+    <appender name="RollingLogFileAppender" type="log4net.Appender.RollingFileAppender">
+      <!-- Local log file path -->
+      <file type="log4net.Util.PatternString" 
+            value="C:\Data\Logs\SkyDelivery\Local-review-log4net.log" />
+      <appendToFile value="true" />
+      <rollingStyle value="Size" />
+      <maximumFileSize value="10MB"/>
+      <maxSizeRollBackups value="10"/>
+      <filter type="log4net.Filter.LevelRangeFilter">
+        <acceptOnMatch value="true" />
+        <levelMin value="WARN"/>
+        <levelMax value="FATAL"/>
+      </filter>
+      <layout type="log4net.Layout.PatternLayout">
+        <conversionPattern 
+          value="[skydelivery.local] %level %utcdate{ISO8601} %logger [thread] [%property{log4net:HostName}] %message %exception" />
+      </layout>
+    </appender>
+
+    <root>
+      <level value="ALL"/>
+      <appender-ref ref="RollingLogFileAppender"/>
+    </root>
+
+    <logger name="NHibernate">
+      <level value="ERROR"/>
+    </logger>
+
+    <logger name="NHibernate.SQL">
+      <level value="ERROR"/>
+    </logger>
+  </log4net>
+
+  <!-- 3) App settings (example for local environment) -->
+  <appSettings>
+    <!-- Toggle bundler locally if you use bundling/minification -->
+    <add key="bundlerEnabled" value="true"/>
+    <add key="BundleJsx" value="true"/>
+
+    <!-- Local MongoDB connection string example -->
+    <add key="MongoConnectionString" 
+         value="mongodb://localhost:27017/skydelivery_local?safe=true" />
+
+    <!-- Debug threshold example -->
+    <add key="JsDebugThreshold" value="fatal" />
+  </appSettings>
+
+  <system.web>
+    <!-- Keep debug="true" for local debugging -->
+    <compilation debug="true" targetFramework="4.8" />
+    
+    <!-- Typical forms authentication settings for local -->
+    <authentication mode="Forms">
+      <forms loginUrl="~/Login/Index" 
+             name=".BPOASPXAUTH" 
+             timeout="15" 
+             protection="All" 
+             slidingExpiration="true" />
+    </authentication>
+    
+    <!-- Example machineKey (replace with your own if needed) -->
+    <machineKey 
+      decryptionKey="84CF187175E85089125753FD4498328426153E614C68A9C0" 
+      validationKey="DA2904CB9800964E284E88A5846515D55C5CCC499099C2BD23088855B7C5026E781280ADE671CA382432740E8D87C6DA6585D8F4CBD426EE62904C7499F91373" />
+  </system.web>
+
+  <system.webServer>
+    <!-- Detailed errors can help debug locally -->
+    <httpErrors errorMode="Detailed" existingResponse="PassThrough">
+      <!-- Example custom error pages (commented out if you don’t need them) -->
+      <!--
+      <remove statusCode="404" subStatusCode="-1" />
+      <remove statusCode="500" subStatusCode="-1" />
+      <error statusCode="404" path="/Error/NotFound" responseMode="ExecuteURL" />
+      <error statusCode="500" path="/Error" responseMode="ExecuteURL" />
+      -->
+    </httpErrors>
+  </system.webServer>
+
+  <system.net>
+    <mailSettings>
+      <!-- Example local SMTP settings -->
+      <smtp from="LocalAdmin@aciweb.local">
+        <network enableSsl="false" host="127.0.0.1" port="25" />
+      </smtp>
+    </mailSettings>
+  </system.net>
+
+</configuration>
