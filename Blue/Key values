@@ -1,0 +1,61 @@
+<configuration>
+  <appSettings>
+    <!-- From First Image -->
+    <add key="SkyBoxUrl" value="https://skybox.api.example.com" />
+    <add key="BaseUrl" value="https://api.yourdomain.com" />
+    <add key="SkyMapsUrl" value="https://maps.sky.service/api" />
+    <add key="FloodApiUrl" value="https://flood.service/api" />
+    <add key="smtphost" value="smtp.yourprovider.com" />
+    <add key="smtpusername" value="noreply@yourdomain.com" />
+    <add key="smtppassword" value="YourSMTPPassword123" />
+    <add key="smtpport" value="587" />
+    <add key="AuthAPTKey" value="your_auth_api_key_here" />
+    <add key="MelissaCustomerId" value="123456" />
+    <add key="FormsApiURL" value="https://forms.api.example.com" />
+    <add key="FormsStaticBaseUrl" value="https://static.forms.example.com" />
+    <add key="PincertUrl" value="https://pincert.validation.service" />
+    <add key="JsDebugThreshold" value="5000" /> <!-- e.g., milliseconds -->
+    <add key="DataPath" value="C:\AppData\YourApp\" />
+    <add key="LogDeliveryRequests" value="true" /> <!-- or false -->
+    <add key="FileApiUrl" value="https://files.api.example.com/upload" />
+    <add key="SOAServerRestUrl" value="https://soa.server.example.com/rest" />
+    <add key="isapiuri" value="https://legacy.isapi.example.com" />
+    <add key="ClientInstallPath" value="\\network\install\path" />
+    <add key="MinimumAfcVersion" value="2.5.0" />
+    <add key="DefaultPaddockFileName" value="default_paddock.json" />
+    <add key="Picklist" value="picklist_v2.csv" />
+    <add key="ReadOnlyDataColor" value="#F0F0F0" />
+    <add key="ReadonlyFieldBackgroundColor" value="#E0E0E0" />
+    <add key="FieldBackgroundColor" value="#FFFFFF" />
+    <add key="CurrentFieldBackgroundColor" value="#DDFFDD" />
+    <add key="UserAssistHighlightColor" value="#FFFF99" />
+    <add key="MaxLandscapesize" value="1920" /> <!-- e.g., pixels -->
+    <add key="MaxPortraitsize" value="1080" />
+    <add key="LandscapeResizeWidth" value="1280" />
+    <add key="LandscapeResizeHeight" value="720" />
+    <add key="PortraitResizeWidth" value="720" />
+
+    <!-- From Second Image -->
+    <add key="PortraitResizeHeight" value="1280" />
+    <add key="MongoConnectionString" value="mongodb://user:pass@localhost:27017/dbname" />
+    <add key="MongoDatabaseName" value="YourAppDB" />
+    <add key="MappingKey" value="your_google_maps_api_key" />
+    <add key="SkyHostURL" value="https://sky.host.example.com" />
+    <add key="RulesTimeout" value="30000" /> <!-- 30 seconds -->
+    <add key="FNCURL" value="https://fnc.service.com/api" />
+    <add key="FNCUsername" value="fnc_service_user" />
+    <add key="FNCPassword" value="fnc_service_password123" />
+    <add key="RulesUiUrl" value="https://rules.ui.example.com" />
+    <add key="SkyMgmtBaseUrl" value="https://sky.management.example.com" />
+    <add key="MemcachedServer" value="127.0.0.1:11211" />
+    <add key="EServiceDeliveryUrl" value="https://eservice.delivery.example.com" />
+    <add key="EmailTemplatePath" value="C:\Templates\Email\" />
+    <add key="Application" value="YourAppName" />
+    <add key="AuthBaseUrl" value="https://auth.yourdomain.com" />
+    <add key="SOACoreUrl" value="https://soa.core.example.com" />
+    <add key="SOACoreIsOn" value="true" /> <!-- or false -->
+    <add key="GoogleMapsJsUrl" value="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY" />
+    <add key="ReviewRestbLambdaArn" value="arn:aws:lambda:region:123456:function:review-process" />
+    <add key="ReviewRestbLambdaRegion" value="us-east-1" />
+  </appSettings>
+</configuration>
