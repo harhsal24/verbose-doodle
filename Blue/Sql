@@ -1,0 +1,7 @@
+CREATE TABLE dbo.MaintenanceMessage (
+    MessageId INT IDENTITY(1,1) PRIMARY KEY,  -- Primary key with auto-increment
+    MessageText NVARCHAR(500) NOT NULL,         -- Text of the maintenance message
+    StartDate DATETIME NOT NULL,                -- When the maintenance starts
+    EndDate DATETIME NULL,                      -- When the maintenance ends (optional)
+    CreatedDate DATETIME DEFAULT GETDATE()      -- Record creation date, defaulting to current date/time
+);
