@@ -14,3 +14,9 @@ CREATE TABLE dbo.MaintenanceMessage (
     CONSTRAINT FK_MaintenanceMessage_Message FOREIGN KEY (MessageId)
         REFERENCES dbo.MaintenanceMessageChoice(Id)
 );
+
+CREATE TABLE dbo.MaintenancellessageChoice (
+    Id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    Ressage NVARCHAR(250) NOT NULL,  -- Adjust the length as needed
+    Color INT NOT NULL
+);
