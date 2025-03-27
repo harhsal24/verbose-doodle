@@ -5,3 +5,12 @@ CREATE TABLE dbo.MaintenanceMessage (
     EndDate DATETIME NULL,                      -- When the maintenance ends (optional)
     CreatedDate DATETIME DEFAULT GETDATE()      -- Record creation date, defaulting to current date/time
 );
+
+
+CREATE TABLE dbo.MaintenanceMessage (
+    Id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    EnableMaintenanceMessage BIT NOT NULL,
+    MessageId INT NULL,  -- foreign key reference
+    CONSTRAINT FK_MaintenanceMessage_Message FOREIGN KEY (MessageId)
+        REFERENCES dbo.MaintenanceMessageChoice(Id)
+);
