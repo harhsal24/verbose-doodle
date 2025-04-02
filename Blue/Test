@@ -1,0 +1,54 @@
+using Moq;
+using NUnit.Framework;
+using System.Collections.Generic;
+using System.Linq;
+
+[TestFixture]
+public class DeliveryOptionsTests
+{
+    private Mock<ICompanyRepository> _companyRepositoryMock;
+    private Mock<IDeliveryRepository> _deliveryRepositoryMock;
+    private Mock<IDeliveryOptionsMapper> _deliveryOptionsMapperMock;
+    private MyController _controller;
+
+    [SetUp]
+    public void Setup()
+    {
+        _companyRepositoryMock = new Mock<ICompanyRepository>();
+        _deliveryRepositoryMock = new Mock<IDeliveryRepository>();
+        _deliveryOptionsMapperMock = new Mock<IDeliveryOptionsMapper>();
+
+        _controller = new MyController(
+            _companyRepositoryMock.Object,
+            _deliveryRepositoryMock.Object,
+            _deliveryOptionsMapperMock.Object
+        );
+    }
+
+    [Test]
+    public void GetCompanyDeliveryOptions_WhenNoProfilePassed_ShouldUseDefaultProfile()
+    {
+        // Arrange
+        int companyId = 1;
+        string profile = null;
+        var company = new Company { Id = companyId, EmployerGuid = "12345" };
+        var deliveryOptions = new List<DeliveryOptionsResource>();
+
+        _companyRepositoryMock.Setup(repo => repo.GetById(companyId)).Returns(company);
+        _deliveryRepositoryMock.Setup(repo => repo.GetCountByEmployerGuid(company.EmployerGuid)).Returns(0);
+        _deliveryRepositoryMock.Setup(repo => repo.GetByEmployerGuid(company.EmployerGuid)).Returns(deliveryOptions);
+        
+        _deliveryOptionsMapperMock.Setup(mapper => 
+            mapper.CheckD08AuthKey(It.IsAny<DeliveryOptionsResource>())).Returns(new DeliveryOptionsResource());
+
+        _deliveryRepositoryMock.Setup(repo => repo.GetDeliveryOptionsDocument(It.IsAny<int>()))
+            .Returns(new DeliveryOptionsMongoDocument());
+
+        // Act
+        var result = _controller.GetCompanyDeliveryOptions(companyId, profile);
+
+        // Assert
+        _companyRepositoryMock.Verify(repo => repo.GetById(companyId), Times.Once);
+        _deliveryRepositoryMock.Verify(repo => repo.Save(It.IsAny<DeliveryOptionsResource>()), Times.Once);
+    }
+}
