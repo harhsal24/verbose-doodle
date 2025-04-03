@@ -1,0 +1,79 @@
+use YourDatabaseName  // Switch to your database
+
+db.Company.insertOne({
+    Name: "ABC Corp",
+    EmployerGuid: "12345",
+    UpdatedTimeStamp: new Date(),
+    LastPaddockChange: new Date(),
+    Orders: [],
+    Groups: [],
+    FormGroups: [],
+    OrderStatuses: [
+        { Name: "New Orders" },
+        { Name: "In Progress" },
+        { Name: "Complete" },
+        { Name: "Canceled" },
+        { Name: "In Delivery" },
+        { Name: "Rejected" }
+    ],
+    DefaultForms: [],
+    Preferences: {},
+    Workflow: {},
+    DeliveryEmails: [],
+    Shortkey: "ABC123",
+    RmRules: [],
+    DeliveryUrl: {},
+    ShowCompanyFormsOnly: false,
+    RulesetToRun: null,
+    RunRuleSet: false,
+    FrameAncestors: "",
+    AllowInternetExplorer: false
+})
+
+
+
+using MongoDB.Driver;
+using MongoDB.Bson;
+using System;
+using System.Collections.Generic;
+
+var client = new MongoClient("mongodb://localhost:27017");
+var database = client.GetDatabase("YourDatabaseName");
+var collection = database.GetCollection<BsonDocument>("Company");
+
+var company = new BsonDocument
+{
+    { "Name", "ABC Corp" },
+    { "EmployerGuid", "12345" },
+    { "UpdatedTimeStamp", DateTime.UtcNow },
+    { "LastPaddockChange", DateTime.UtcNow },
+    { "Orders", new BsonArray() },
+    { "Groups", new BsonArray() },
+    { "FormGroups", new BsonArray() },
+    { "OrderStatuses", new BsonArray 
+        {
+            new BsonDocument { { "Name", "New Orders" } },
+            new BsonDocument { { "Name", "In Progress" } },
+            new BsonDocument { { "Name", "Complete" } },
+            new BsonDocument { { "Name", "Canceled" } },
+            new BsonDocument { { "Name", "In Delivery" } },
+            new BsonDocument { { "Name", "Rejected" } }
+        }
+    },
+    { "DefaultForms", new BsonArray() },
+    { "Preferences", new BsonDocument() },
+    { "Workflow", new BsonDocument() },
+    { "DeliveryEmails", new BsonArray() },
+    { "Shortkey", "ABC123" },
+    { "RmRules", new BsonArray() },
+    { "DeliveryUrl", new BsonDocument() },
+    { "ShowCompanyFormsOnly", false },
+    { "RulesetToRun", BsonNull.Value },
+    { "RunRuleSet", false },
+    { "FrameAncestors", "" },
+    { "AllowInternetExplorer", false }
+};
+
+collection.InsertOne(company);
+Console.WriteLine("Company inserted successfully!");
+
