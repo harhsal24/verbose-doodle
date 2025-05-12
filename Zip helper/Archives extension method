@@ -1,0 +1,65 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
+
+namespace MyProject.IOCompressionHelpers
+{
+    public static class ZipArchiveExtensions
+    {
+        /// <summary>
+        /// Adds the given files to this archive, flattening any folder structure on disk,
+        /// and placing them all under the specified top-level directory path inside the ZIP.
+        /// </summary>
+        public static void AddFiles(
+            this ZipArchive archive,
+            IEnumerable<string> fileNames,
+            string directoryPathInArchive,
+            CompressionLevel compressionLevel = CompressionLevel.Optimal)
+        {
+            if (archive == null) throw new ArgumentNullException(nameof(archive));
+            if (fileNames == null) throw new ArgumentNullException(nameof(fileNames));
+
+            // normalize the target directory
+            if (!string.IsNullOrEmpty(directoryPathInArchive) && !directoryPathInArchive.EndsWith("/"))
+                directoryPathInArchive += "/";
+
+            foreach (var file in fileNames)
+            {
+                if (string.IsNullOrWhiteSpace(file) || !File.Exists(file))
+                    continue; // or throw, based on your error policy
+
+                string entryName = directoryPathInArchive + Path.GetFileName(file);
+                archive.CreateEntryFromFile(file, entryName, compressionLevel);
+            }
+        }
+    }
+
+    public static class ZipFileExtensions
+    {
+        /// <summary>
+        /// Creates a new ZIP archive at <paramref name="zipPath"/>,
+        /// adding all <paramref name="fileNames"/> (flattened) under
+        /// <paramref name="directoryPathInArchive"/> inside the ZIP.
+        /// </summary>
+        public static void CreateFromFiles(
+            IEnumerable<string> fileNames,
+            string zipPath,
+            string directoryPathInArchive = "",
+            CompressionLevel compressionLevel = CompressionLevel.Optimal)
+        {
+            if (fileNames == null) throw new ArgumentNullException(nameof(fileNames));
+            if (string.IsNullOrWhiteSpace(zipPath)) throw new ArgumentNullException(nameof(zipPath));
+
+            // ensure directory exists
+            var targetDir = Path.GetDirectoryName(zipPath);
+            if (!string.IsNullOrEmpty(targetDir))
+                Directory.CreateDirectory(targetDir);
+
+            using (var archive = ZipFile.Open(zipPath, ZipArchiveMode.Create))
+            {
+                archive.AddFiles(fileNames, directoryPathInArchive, compressionLevel);
+            }
+        }
+    }
+}
