@@ -1,0 +1,32 @@
+using System.IO;
+using System.IO.Compression;
+
+public static class ZipArchiveExtensions
+{
+    /// <summary>
+    /// Adds the given files to the archive, flattening any sub-folders,
+    /// and placing them all under the specified top-level directory path inside the ZIP.
+    /// </summary>
+    public static void AddFiles(
+        this ZipArchive archive,
+        IEnumerable<string> fileNames,
+        string directoryPathInArchive,
+        CompressionLevel compressionLevel = CompressionLevel.Optimal)
+    {
+        // Ensure directoryPathInArchive ends with a slash (or empty for root)
+        if (!string.IsNullOrEmpty(directoryPathInArchive) &&
+            !directoryPathInArchive.EndsWith("/"))
+        {
+            directoryPathInArchive += "/";
+        }
+
+        foreach (var file in fileNames)
+        {
+            // Grab just the file name (flatten any paths)
+            var entryName = directoryPathInArchive + Path.GetFileName(file);
+
+            // Create the entry
+            archive.CreateEntryFromFile(file, entryName, compressionLevel);
+        }
+    }
+}
