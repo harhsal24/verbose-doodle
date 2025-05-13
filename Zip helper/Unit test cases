@@ -1,1 +1,51 @@
+using System;
+using System.IO;
+using Xunit;
 
+namespace YourNamespace.Tests
+{
+    public class PathValidatorTests
+    {
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void ValidateFilePath_NullOrWhiteSpace_ThrowsArgumentException(string input)
+        {
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentException>(() => PathValidator.ValidateFilePath(input));
+            Assert.Contains("null or empty", ex.Message, StringComparison.OrdinalIgnoreCase);
+        }
+
+        [Fact]
+        public void ValidateFilePath_InvalidCharacters_ThrowsArgumentException()
+        {
+            // Arrange
+            // Pick one or more invalid path chars, e.g. '|' is invalid on Windows
+            var invalidPath = "some|invalid.txt";
+
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentException>(() => PathValidator.ValidateFilePath(invalidPath));
+            Assert.Contains("invalid characters", ex.Message, StringComparison.OrdinalIgnoreCase);
+        }
+
+        [Fact]
+        public void ValidateFilePath_FileExists_DoesNotThrow()
+        {
+            // Arrange
+            // Create a temporary file so that it definitely exists
+            var tempFile = Path.GetTempFileName();
+            try
+            {
+                // Act & Assert
+                // Should complete without throwing any exception
+                PathValidator.ValidateFilePath(tempFile);
+            }
+            finally
+            {
+                // Clean up
+                File.Delete(tempFile);
+            }
+        }
+    }
+}
