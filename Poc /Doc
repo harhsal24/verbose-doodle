@@ -1,1 +1,25 @@
 
+Summary:
+Upgrade the system for high-volume, fault-tolerant file processing using Azure. Leverage Azure Queues and Blob Storage for efficient message handling, file transfer, and service integration. Ensure reliability, state management, and delivery tracking.
+
+Key Points:
+
+Scalable Azure app using Queue Storage
+
+Fault-tolerant message processing
+
+File fetch, process, and return via Queue + Blob
+
+Duplicate handling and retry on failure
+
+Maintain state across backend services
+
+Blob Storage integration for seamless file access
+
+Track processing via message IDs or URLs
+
+
+
+
+
+
