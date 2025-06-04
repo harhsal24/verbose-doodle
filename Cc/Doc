@@ -1,0 +1,30 @@
+Summary:
+The goal is to design a reliable, scalable, and maintainable system using Azure services. It should enable efficient communication, environment-specific integration, and robust delivery tracking across components.
+
+Key Points:
+
+Use Azure for reliable and scalable architecture
+
+Ensure efficient cross-service communication
+
+Enable environment-based configuration and integration
+
+Implement delivery tracking with message IDs or URLs
+
+Design for easy maintenance and future scalability
+
+
+Summary:
+The goal is to design a reliable, scalable, and maintainable system using Azure services. It should enable efficient communication, environment-specific integration, and robust delivery tracking across components.
+
+Key Points:
+
+Use Azure for reliable and scalable architecture
+
+Ensure efficient cross-service communication
+
+Enable environment-based configuration and integration
+
+Implement delivery tracking with message IDs or URLs
+
+Design for easy maintenance and future scalability
