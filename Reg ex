@@ -1,0 +1,1 @@
+<common>(?:[\s\S]*?<ACI_TagPath>[^<]*\\COMP_SALES_(\d+)\\(?:[\s\S]*?<ACI_Tag>[^<]*\\COMP_SALES_(\d+)\\[^<]*<ACI_TagIsCheckbox[^<]*<UAD_Xpath>[^<]*['"]SalesComparable['"]\]\s*\[\s*(\d+)\s*\][^<]*<\/common>
