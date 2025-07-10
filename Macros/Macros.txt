@@ -1,16 +1,18 @@
-#Persistent            ; keep the script running
-SetBatchLines, -1     ; run at full speed if needed
+#Persistent               ; keep script running
+SetBatchLines, -1        ; no sleep between lines
 
 ; ---- CONFIGURATION ----
-Interval := 5000      ; run every 5000 ms (5 seconds). Change as needed.
+Interval := 5000         ; repeat every 5000 ms (5 seconds). Adjust as needed.
 
-; ---- STATE VARIABLE ----
+; ---- STATE ----
 running := false
+execCount := 0           ; counts how many times DoMacro() has run
 
 ; ---- TOGGLE WITH F9 ----
 F9::
     running := !running
     if (running) {
+        execCount := 0                      ; reset counter when starting
         SetTimer, DoMacro, %Interval%
         TrayTip,, Macro ON (every %Interval% ms), 1
     } else {
@@ -45,6 +47,11 @@ DoMacro:
     Send, {Tab}
     Sleep, 50
 
-    ; 7) Ctrl+S
-    Send, ^s
+    ; increment and check counter
+    execCount += 1
+    if (execCount >= 10) {
+        ; 7) Ctrl+S on every 10th run
+        Send, ^s
+        execCount := 0
+    }
 return
