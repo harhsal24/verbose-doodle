@@ -1,0 +1,50 @@
+#Persistent            ; keep the script running
+SetBatchLines, -1     ; run at full speed if needed
+
+; ---- CONFIGURATION ----
+Interval := 5000      ; run every 5000 ms (5 seconds). Change as needed.
+
+; ---- STATE VARIABLE ----
+running := false
+
+; ---- TOGGLE WITH F9 ----
+F9::
+    running := !running
+    if (running) {
+        SetTimer, DoMacro, %Interval%
+        TrayTip,, Macro ON (every %Interval% ms), 1
+    } else {
+        SetTimer, DoMacro, Off
+        TrayTip,, Macro OFF, 1
+    }
+return
+
+; ---- YOUR MACRO SEQUENCE ----
+DoMacro:
+    ; 1) Ctrl+Del
+    Send, ^{Del}
+    Sleep, 50
+
+    ; 2) Shift+F10
+    Send, +{F10}
+    Sleep, 100
+
+    ; 3) Up‐arrow
+    Send, {Up}
+    Sleep, 50
+
+    ; 4) Enter
+    Send, {Enter}
+    Sleep, 100
+
+    ; 5) Ctrl+V
+    Send, ^v
+    Sleep, 50
+
+    ; 6) Tab
+    Send, {Tab}
+    Sleep, 50
+
+    ; 7) Ctrl+S
+    Send, ^s
+return
